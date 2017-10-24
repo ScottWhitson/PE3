@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>USA Airports</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+</head>
+
+<body>
+<h1>Airports of United States Territory</h1>
+<form>
+    <input type="text" name="search"  placeholder="Airport..">
+</form>
+<div id="wrapper">
+    <div id="map" style="width: 100%; height: 460px;"></div>
+    <div id="controls">
+    <div id="credits"><p> Winter 2017  | GEOG 371 | Geovisualization: Web Mapping &copy; Scott Whitson, CEOAS, OSU</p></div>
+
+    </div>
+
+
+
+</div>
+<script>
+
+var map = L.map('map', {center: [38.6046691, -101.9795816], zoom:3 });
+
+L.tileLayer(('https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2hpdHNvbnMiLCJhIjoiY2l0eW15ZDJ6MDhrbTJ5bjRuZGx1Z3lmZiJ9.4RXjTjxBUVzG2X3mdtcSZQ'),
+{   maxZoom: 15,
+    minZoom: 3,
+    attribution: 'Airport data &copy; Map Cruzin | United States &copy; Open Street Map | Base Map &copy; Mapbox'
+}).addTo(map);
+
+
+
+var myIcon = L.Icon.extend({
+    options:{
+        shadowUrl: 'img/airport_sd.png',
+        iconSize: [13, 13],
+        shadowSize: [17,13],
+        iconAnchor: [15, 15],
+        shadowAnchor: [16, 16],
+        popupAnchor: [-8, -18]
+    }
+        });
+
+var my1Icon = new myIcon({iconUrl: 'img/airport1.png'}),
+    my2Icon = new myIcon({iconUrl: 'img/airport2.png'});
+
+
+// Add airports GeoJSON Data
+// Null variable that will hold rodent violation data
+var airports = null;
+
+// Get GeoJSON and put on it on the map when it loads
+$.getJSON("assets/airports.geojson", function(data) {
+    airports = L.geoJson(data, {
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup(feature.properties.AIRPT_NAME);
+        }, pointToLayer: function (feature, latlng) {
+            var marker = null;
+            if (feature.properties.CNTL_TWR == "Y") {
+                marker = L.marker(latlng, {icon: my1Icon});
+        }   else if (feature.properties.CNTL_TWR == "N") {
+                marker = L.marker(latlng, {icon: my2Icon});
+            }
+                return marker;
+        }
+    }).addTo(map);
+});
+// Set function for color ramp
+function setColor(density){
+    return  density > 50 ? '#FF2000' :
+            density > 20 ? '#FF8000' :
+            density > 10 ? '#FFFF00' :
+            density > 5 ? '#73B98B' :
+            density > 1 ? '#45A2B9' :
+                          '#0080FF';
+}
+
+// Set style function that sets fill color property equal to airport density, the count field within us-states.geojson
+function style(feature) {
+    return {
+        fillColor: setColor(feature.properties.count),
+        fillOpacity: 0.5,
+        weight: 2,
+        opacity: 1,
+        color: '#ffffff',
+        dashArray: '4'
+    };
+}
+var states = null;
+
+$.getJSON("assets/us-states.geojson",function (data) {
+    states = L.geoJson(data, {style: style}).addTo(map);
+});
+
+
+
+// Create Leaflet Control Object for Legend
+var legend = L.control({position: 'topright'});
+
+// Function that runs when legend is added to map
+legend.onAdd = function() {
+
+// Create Div Element and Populate it with HTML
+    var div = L.DomUtil.create('div', 'Legend');
+
+
+
+    div.innerHTML += '<p>Has a Control Tower</p><img src="img/airport1.png" width="16" height="16">';
+    div.innerHTML += '<p>Does not have a Control Tower</p><img src="img/airport2.png" width="16" height="16">';
+    div.innerHTML += '<hr><b><b><br />';
+    div.innerHTML += '<b># of Airports per State</b><br /><br />';
+    div.innerHTML += '<i style="background: #0080FF;opacity: 0.5"></i><p style="margin-top:0px">0-1</p>';
+    div.innerHTML += '<i style="background: #45A2B9;opacity: 0.5"></i><p> 2-5</p>';
+    div.innerHTML += '<i style="background: #73B98B;opacity: 0.5"></i><p> 6-10</p>';
+    div.innerHTML += '<i style="background: #FFFF00;opacity: 0.5"></i><p>11-20</p>';
+    div.innerHTML += '<i style="background: #FF8000;opacity: 0.5"></i><p>21-50</p>';
+    div.innerHTML += '<i style="background: #FF2000;opacity: 0.5"></i><p>Over 50</p>';
+
+
+// Return the Legend div containing the HTML content
+    return div;
+};
+// Add Legend to Map
+legend.addTo(map);
+
+// Add Scale Bar to Map
+L.control.scale({position: 'bottomleft'}).addTo(map);
+
+/** Search Functionality **/
+//search by airport abbreviation and zoom to that point
+function myFunction() {
+    var x = document.createElement("INPUT");
+    x.setAttribute("type", "search");
+    document.body.appendChild(x);
+}
+
+
+
+</script>
+
+</body>
+</html>

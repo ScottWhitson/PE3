@@ -1,0 +1,88 @@
+body {
+    background-color: #191818;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+    margin: auto;
+}
+
+#wrapper {
+    width: 100%;
+}
+
+.Legend {
+    line-height: 9px;
+    width: 180px;
+    color: #f4f4f4;
+    font-family: 'Rubik', 'Helvetica', sans-serif;
+    padding: 6px 10px;
+    background: rgba( 5,0,65,0.5);
+    box-shadow: 0 0 15px rgba(242,242,242,0.7);
+    border-radius: 2px;
+}
+
+.Legend i {
+    width: 16px;
+    height: 18px;
+    float: left;
+    margin-right: 4px;
+}
+
+.Legend b {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.Legend img {
+    margin-right: 8px;
+}
+
+
+
+
+
+
+#credits p {
+    margin-top: 5px;
+    font-size: 12px;
+    text-align: left;
+    line-height: 16px;
+}
+h1 {
+    font-family: 'Rubik', 'Helvetica', sans-serif;
+    font-weight: 500;
+    color: #f4f4f4;
+    text-align: center;
+}
+
+p {
+    font-family: 'Rubik', 'Helvetica', sans-serif;
+    color: #f4f4f4;
+}
+.box{
+    margin: 20px auto;
+    width: 500px;
+    height: 50px;
+}
+
+
+
+input[type=text] {
+    width: 130px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+    width: 50%;
+}
